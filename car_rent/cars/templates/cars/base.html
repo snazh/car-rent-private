@@ -39,11 +39,15 @@
                 <a class="nav-link" href="#"><i class="fas fa-car"></i> Cars</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About Us</a>
+                <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:register' %}"><i class="fas fa-user-plus"></i> Register</a>
+            </li>
+
         </ul>
     </div>
 </nav>
