@@ -19,6 +19,9 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="{% static 'cars/css/styles.css' %}">
 
+    {%block styles%}
+    {%endblock%}
+
 </head>
 
 <body>
@@ -33,20 +36,30 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#"><i class="fas fa-home"></i> Home</a>
+                <a class="nav-link" href="{% url 'cars:home' %}"><i class="fas fa-home"></i> Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-car"></i> Cars</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a>
+                <a class="nav-link" href="{% url 'cars:about' %}"><i class="fas fa-info-circle"></i> About Us</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
             </li>
+            {% if request.user.is_authenticated%}
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:profile' %}"><i class="fas fa-user"></i>Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+            </li>
+            {%else%}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:register' %}"><i class="fas fa-user-plus"></i> Register</a>
             </li>
+            {%endif%}
 
         </ul>
     </div>
