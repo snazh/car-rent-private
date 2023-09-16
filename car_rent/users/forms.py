@@ -2,6 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
+
+from .models import UserProfile
 
 
 class RegistrationForm(UserCreationForm):
@@ -19,7 +22,32 @@ class RegistrationForm(UserCreationForm):
             raise ValidationError('Too long username')
         return username
 
+    def save(self, commit=True):
+        user = super(RegistrationForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+
+        if commit:
+            user.save()
+
+            # Create UserProfile
+            UserProfile.objects.create(
+                user=user,
+                first_name='first_name',
+                last_name='last_name',
+                bio='',
+                slug=slugify(self.cleaned_data['username']),
+                avatar=None  # You can adjust this field as needed
+            )
+
+        return user
+
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField()
     password = forms.PasswordInput()
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name', 'bio', 'avatar']

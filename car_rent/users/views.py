@@ -1,11 +1,11 @@
 from django.contrib.auth import logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
+from django.views import View
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from .forms import RegistrationForm, LoginForm
+from django.views.generic import CreateView, ListView, UpdateView
+from .forms import RegistrationForm, LoginForm, ProfileForm
+from .models import UserProfile
 from .utils import DataMixin
 
 
@@ -31,6 +31,16 @@ class LoginUser(DataMixin, LoginView):
 
     def get_success_url(self):
         return reverse_lazy('cars:home')
+
+
+def show_user(request, user_slug):
+    print(f"Requested user_slug: {user_slug}")
+    user_profile = get_object_or_404(UserProfile, slug=user_slug)
+    context = {
+        'user_profile': user_profile,
+        'title': f"{user_slug}"
+    }
+    return render(request, 'users/profile.html', context=context)
 
 
 def logout_user(request):
