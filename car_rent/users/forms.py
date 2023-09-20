@@ -32,9 +32,9 @@ class RegistrationForm(UserCreationForm):
             # Create UserProfile
             UserProfile.objects.create(
                 user=user,
-                first_name='first_name',
-                last_name='last_name',
-                bio='',
+                first_name=None,
+                last_name=None,
+                bio=None,
                 slug=slugify(self.cleaned_data['username']),
                 avatar=None  # You can adjust this field as needed
             )
@@ -50,4 +50,18 @@ class LoginForm(AuthenticationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name', 'bio', 'avatar']
+        fields = ('first_name', 'last_name', 'bio', 'avatar')
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('first_name', 'last_name', 'bio', 'avatar')
+
+    def clean_first_name(self):  # custom validator
+        first_name = self.cleaned_data['first_name']
+        if len(first_name) < 5:
+            raise ValidationError('Too short name')
+        elif len(first_name) > 30:
+            raise ValidationError('Too long name')
+        return first_name

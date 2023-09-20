@@ -1,0 +1,20 @@
+{% extends 'cars/base.html' %}
+{%load static%}
+
+{% block content %}
+<div class="form-content">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for f in form %}
+        <p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
+        {%if f.errors%}
+        <div class="error-block">{{ f.errors }}</div>
+        {%endif%}
+        {% endfor %}
+        <button type="submit" class="button-80">Save Changes</button>
+
+
+    </form>
+</div>
+
+{% endblock %}

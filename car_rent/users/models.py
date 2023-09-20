@@ -1,9 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
+import datetime
 from django.urls import reverse
-from django.utils.text import slugify
+
+
+def user_avatar_upload_to(instance, filename):
+    # Assuming you have a UserProfile model with a OneToOneField to the User model
+    user_slug = instance.slug
+    current_time = datetime.datetime.now()
+    filename = f'{current_time}_{filename}'
+    return f'avatars/{user_slug}/{filename}'
 
 
 class UserProfile(models.Model):
@@ -12,7 +18,7 @@ class UserProfile(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     bio = models.TextField()
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to=user_avatar_upload_to, null=True, blank=True)
 
     def __str__(self):
         return self.user.username

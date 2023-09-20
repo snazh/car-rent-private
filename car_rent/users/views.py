@@ -1,10 +1,11 @@
 from django.contrib.auth import logout
-from django.views import View
+from django.http import Http404
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, UpdateView
-from .forms import RegistrationForm, LoginForm, ProfileForm
+from django.views import View
+from django.views.generic import CreateView, DetailView
+from .forms import RegistrationForm, LoginForm, UpdateProfileForm
 from .models import UserProfile
 from .utils import DataMixin
 
@@ -33,14 +34,65 @@ class LoginUser(DataMixin, LoginView):
         return reverse_lazy('cars:home')
 
 
-def show_user(request, user_slug):
-    print(f"Requested user_slug: {user_slug}")
-    user_profile = get_object_or_404(UserProfile, slug=user_slug)
+class ShowUser(DataMixin, DetailView):
+    template_name = 'users/profile.html'
+    model = UserProfile
+    slug_url_kwarg = 'user_slug'
+    context_object_name = 'user_profile'
+
+    def get_object(self, queryset=None):
+        user_profile = super().get_object(queryset=queryset)
+        if user_profile.user != self.request.user:
+            raise Http404("You do not have permission to view this profile.")
+        return user_profile
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        title = self.get_user_context(title="Profile")
+        return {**context, **title}
+
+
+class UpdateProfileView(DataMixin, View):
+    template_name = 'users/update_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        # Fetch user profile using ORM
+        profile = UserProfile.objects.get(user=request.user)
+
+        # Populate form with user profile data
+        form = UpdateProfileForm(instance=profile)
+
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = UpdateProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            # Update user profile using ORM
+            profile = UserProfile.objects.get(user=request.user)
+            profile.first_name = form.cleaned_data['first_name']
+            profile.last_name = form.cleaned_data['last_name']
+            profile.bio = form.cleaned_data['bio']
+            profile.avatar = form.cleaned_data['avatar']
+            profile.save()
+
+            # Redirect to a success page
+            return render(request, 'users/success.html')
+
+        return render(request, self.template_name, {'form': form})
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        title = self.get_user_context(title="Update profile")
+        return {**context, **title}
+
+
+def success(request):
     context = {
-        'user_profile': user_profile,
-        'title': f"{user_slug}"
+        'title': 'Successful alteration'
     }
-    return render(request, 'users/profile.html', context=context)
+    return render(request, 'users/success.html', context=context)
 
 
 def logout_user(request):
