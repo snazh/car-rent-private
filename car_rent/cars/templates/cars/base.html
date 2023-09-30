@@ -47,15 +47,20 @@
                 <a class="nav-link" href="{% url 'cars:about' %}"><i class="fas fa-info-circle"></i> About Us</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+                <a class="nav-link" href="{% url 'cars:contact' %}"><i class="fas fa-envelope"></i> Contact</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cars:map' %}"><i class="fa fa-map-signs"></i> Our
+                    branches</a>
             </li>
             {% if request.user.is_authenticated%}
 
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:user_profile' user_slug=request.user.userprofile.slug %}"><i class="fas fa-user"></i>Profile</a>
+                <a class="nav-link" href="{% url 'users:user_profile' user_slug=request.user.userprofile.slug %}"><i
+                        class="fas fa-user"></i> Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+                <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
             </li>
             {%else%}
             <li class="nav-item">

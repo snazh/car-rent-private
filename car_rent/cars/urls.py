@@ -1,11 +1,16 @@
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib import admin
+from django.urls import path
 from .views import *
+from django.views.decorators.cache import cache_page
+
 app_name = 'cars'
 urlpatterns = [
 
-    path('', Home.as_view(), name='home'),
+    path('', HomeView.as_view(), name='home'),
     path('about/', about, name='about'),
+    path('contact/', ContactFormView.as_view(), name='contact'),
+    path('map/', MapView.as_view(), name='map'),
+    path('add-car/', AddCarView.as_view(), name='add_car'),
+
 ]
+# path('', cache_page(80)(HomeView.as_view()), name='home'),
+# path('about/', cache_page(80)(about), name='about'),

@@ -1,7 +1,7 @@
 from django.contrib.auth import logout
 from django.http import Http404
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView
@@ -41,7 +41,8 @@ class ShowUser(DataMixin, DetailView):
     context_object_name = 'user_profile'
 
     def get_object(self, queryset=None):
-        user_profile = super().get_object(queryset=queryset)
+        user_profile = get_object_or_404(self.model.objects.select_related('user'),
+                                         slug=self.kwargs[self.slug_url_kwarg])
         if user_profile.user != self.request.user:
             raise Http404("You do not have permission to view this profile.")
         return user_profile
@@ -86,13 +87,6 @@ class UpdateProfileView(DataMixin, View):
         context = super().get_context_data(**kwargs)
         title = self.get_user_context(title="Update profile")
         return {**context, **title}
-
-
-def success(request):
-    context = {
-        'title': 'Successful alteration'
-    }
-    return render(request, 'users/success.html', context=context)
 
 
 def logout_user(request):

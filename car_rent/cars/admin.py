@@ -11,9 +11,9 @@ class CarPostAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
-@admin.register(CarProperty)
-class CarPropertiesAdmin(admin.ModelAdmin):
-    list_display = ['model', 'vendor', 'year', 'price']
+@admin.register(Car)
+class CarAdmin(admin.ModelAdmin):
+    list_display = ['model', 'vendor', 'slug', 'year', 'price']
     list_filter = ['vendor', 'year']
     search_fields = ['model', 'vendor']
     prepopulated_fields = {'slug': ('model',)}
@@ -30,3 +30,9 @@ class RentalDealAdmin(admin.ModelAdmin):
     list_display = ['car', 'client', 'start_date', 'end_date', 'total_cost', 'status']
     list_filter = ['status', 'start_date', 'end_date']
     search_fields = ['car__model', 'client__first_name', 'client__last_name']
+
+
+@admin.register(Search)
+class RentalDealAdmin(admin.ModelAdmin):
+    list_display = ['name', 'lng', 'lat', 'date', 'active']
+    list_editable = ['lng', 'lat', 'active']
