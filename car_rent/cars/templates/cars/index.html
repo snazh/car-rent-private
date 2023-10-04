@@ -1,12 +1,48 @@
 {%extends 'cars/base.html'%}
-
+{%load static%}
+{%block custom_styles%}
+<link rel="stylesheet" href="{% static 'cars/css/card.css' %}">
+{%endblock%}
 
 {%block content%}
 <!-- Main Content Goes Here -->
 <div class="container mt-4">
     <h1>Welcome to Car Rent home page</h1>
-    <a class="button-80" href="{%url 'cars:add_car'%}">Add Car</a>
-
+    <a class="button-80" href="{% url 'cars:add_car' %}">Add Car</a>
+    <h1>Available cars</h1>
 </div>
+
+<main>
+
+    <div class="container-fluid bg-trasparent my-4 p-3" style="position: relative;">
+        <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
+            {% for car in cars %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {%if car.properties.photo%}
+                    <img src="{{ car.properties.photo.url }}"
+                         class="card-img-top" alt="car_photo">
+                    {%endif%}
+                    <div class="card-body">
+                        <div class="clearfix mb-3">
+                            <span class="float-start badge rounded-pill bg-primary">{{ car.properties.model }}</span>
+                            <span class="float-end price-hp">  ㅤㅤㅤ</span>
+                            <span class="float-end price-hp">Rent Price: {{car.daily_rent_cost}}$</span>
+                        </div>
+                        <h5 class="card-title">Description: {{ car.description }}</h5>
+                        <h5 class="card-title">Owner: {{ car.properties.user.first_name }}</h5>
+                        <div class="text-center my-4">
+                            <a href="{% url 'cars:car_details' car_slug=car.slug %}" class="btn btn-warning">Check
+                                offer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+            <!-- Similar structure for the other three cards -->
+        </div>
+    </div>
+</main>
+
 
 {%endblock%}

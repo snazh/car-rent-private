@@ -1,29 +1,10 @@
 from django.db import models
 import datetime
 from django.urls import reverse
+from users.models import UserProfile
 
 
 # Create your models here.
-
-class CarPost(models.Model):
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, verbose_name='URL', db_index=True, max_length=255)
-    description = models.TextField(blank=False)
-    status = models.CharField(max_length=20, choices=[('available', 'Available'), ('rented', 'Rented'),
-                                                      ('under_repair', 'Under Repair')], default='available')
-    daily_rent_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='time of creation')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='time of update')
-    is_published = models.BooleanField(default=True)
-    properties = models.ForeignKey('Car', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = 'Post about car'
-        verbose_name_plural = 'Posts about cars'
-        ordering = ['-created_at', 'title']
 
 
 def user_avatar_upload_to(instance, filename):
@@ -35,6 +16,7 @@ def user_avatar_upload_to(instance, filename):
 
 
 class Car(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     model = models.CharField(max_length=255)
     vendor = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, verbose_name='URL', db_index=True, max_length=255)
@@ -50,20 +32,40 @@ class Car(models.Model):
         ordering = ['model', 'year']
 
 
-class Client(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    phone_number = models.CharField(max_length=15)
-    email = models.EmailField()
-    additional_contact_info = models.TextField(blank=True)
+class CarCategory(models.Model):
+    name = models.CharField(max_length=255,
+                            choices=[('economy', 'Economy'), ('standard', 'Standard'), ('luxury', 'Luxury')],
+                            default='economy')
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.name
+
+
+class CarPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, verbose_name='URL', db_index=True, max_length=255)
+    description = models.TextField(blank=False)
+    status = models.CharField(max_length=20, choices=[('available', 'Available'), ('rented', 'Rented'),
+                                                      ('under_repair', 'Under Repair')], default='available')
+    daily_rent_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='time of creation')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='time of update')
+    is_published = models.BooleanField(default=True)
+    properties = models.ForeignKey(Car, on_delete=models.CASCADE)
+    category = models.ForeignKey(CarCategory, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Post about car'
+        verbose_name_plural = 'Posts about cars'
+        ordering = ['-created_at', 'title']
 
 
 class RentalDeal(models.Model):
-    car = models.ForeignKey('Car', on_delete=models.CASCADE)
-    client = models.ForeignKey('Client', on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    client = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)

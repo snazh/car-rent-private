@@ -1,0 +1,78 @@
+{%extends 'cars/base.html'%}
+{%load static%}
+{%block custom_styles%}
+<link rel="stylesheet" href=
+        "https://unpkg.com/purecss@1.0.1/build/pure-min.css">
+
+<style>
+        /* Custom styles */
+        .blog {
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        .blog-header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .blog-title {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .blog-subtitle {
+            font-size: 24px;
+            color: gray;
+        }
+
+        .blog-post {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid lightgray;
+        }
+
+        .blog-post-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .blog-post-date {
+            font-size: 18px;
+            color: gray;
+            margin-bottom: 20px;
+        }
+
+        .blog-post-content {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+
+
+</style>
+{%endblock%}
+{%block content%}
+<!-- Main Content Goes Here -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1>{{ car.title }}</h1>
+            <p><strong>Slug:</strong> {{ car.slug }}</p>
+            <p><strong>Description:</strong> {{ car.description }}</p>
+            <p><strong>Status:</strong> {{ car.status }}</p>
+            <p><strong>Daily Rent Cost:</strong> {{ car.daily_rent_cost }} USD</p>
+            <p><strong>Created At:</strong> {{ car.created_at }}</p>
+            <p><strong>Updated At:</strong> {{ car.updated_at }}</p>
+            <p><strong>Is Published:</strong> {% if car.is_published %}Yes{% else %}No{% endif %}</p>
+            <p><strong>Car Model:</strong> {{ car.properties.model }}</p>
+            <!-- Add more attributes as needed -->
+        </div>
+        <div class="col-lg-6">
+            <img src="{{ car.properties.photo.url }}">
+        </div>
+    </div>
+</div>
+
+
+{%endblock%}

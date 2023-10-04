@@ -5,24 +5,24 @@ from .models import *
 # Register your models here.
 @admin.register(CarPost)
 class CarPostAdmin(admin.ModelAdmin):
-    list_display = ['title', 'status', 'daily_rent_cost', 'created_at', 'updated_at', 'is_published']
+    list_display = ['title', 'status', 'slug', 'daily_rent_cost', 'created_at', 'updated_at', 'is_published']
     list_filter = ['status', 'created_at', 'updated_at', 'is_published']
     search_fields = ['title', 'description']
     prepopulated_fields = {'slug': ('title',)}
 
 
+@admin.register(CarCategory)
+class CarCategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
+
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-    list_display = ['model', 'vendor', 'slug', 'year', 'price']
+    list_display = ['model', 'photo', 'slug', 'year', 'price']
+    list_editable = ['photo']
     list_filter = ['vendor', 'year']
     search_fields = ['model', 'vendor']
     prepopulated_fields = {'slug': ('model',)}
-
-
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'phone_number', 'email']
-    search_fields = ['first_name', 'last_name', 'email']
 
 
 @admin.register(RentalDeal)

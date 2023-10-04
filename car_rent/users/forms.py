@@ -32,11 +32,11 @@ class RegistrationForm(UserCreationForm):
             # Create UserProfile
             UserProfile.objects.create(
                 user=user,
-                first_name=None,
-                last_name=None,
-                bio=None,
+                first_name='',
+                last_name='',
+                bio='',
                 slug=slugify(self.cleaned_data['username']),
-                avatar=None  # You can adjust this field as needed
+                avatar=''  # You can adjust this field as needed
             )
 
         return user

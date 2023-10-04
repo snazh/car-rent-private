@@ -4,6 +4,7 @@ import datetime
 from django.urls import reverse
 
 
+
 def user_avatar_upload_to(instance, filename):
     # Assuming you have a UserProfile model with a OneToOneField to the User model
     user_slug = instance.slug

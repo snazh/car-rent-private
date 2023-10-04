@@ -12,7 +12,7 @@ from .utils import DataMixin
 
 class SignUp(DataMixin, CreateView):
     form_class = RegistrationForm
-    success_url = reverse_lazy('cars:home')
+    success_url = reverse_lazy('users:login')
     template_name = 'users/registration.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):

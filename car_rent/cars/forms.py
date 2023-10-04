@@ -1,6 +1,6 @@
 from django import forms
 from captcha.fields import CaptchaField
-from .models import Car
+from .models import Car, CarPost
 
 
 class ContactForm(forms.Form):
@@ -12,5 +12,5 @@ class ContactForm(forms.Form):
 
 class CarPostForm(forms.ModelForm):
     class Meta:
-        model = Car
-        fields = ['model', 'vendor', 'slug', 'year', 'price', 'photo', 'features']
+        model = CarPost
+        fields = ['title', 'description', 'slug', 'daily_rent_cost', 'is_published', 'properties', 'category']

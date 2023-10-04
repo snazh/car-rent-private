@@ -3,8 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, FormView, CreateView
-from .models import CarPost, Search
+from django.views.generic import ListView, FormView, CreateView, DetailView
+from .models import CarPost, Search, Car
 from .utils import DataMixin
 from .forms import ContactForm, CarPostForm
 
@@ -14,7 +14,7 @@ class AddCarView(LoginRequiredMixin, DataMixin, CreateView):
     template_name = 'cars/add_car.html'
     login_url = reverse_lazy('home')  # redirect if user is not authorized
     raise_exception = True  # access is forbidden
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('/')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -28,11 +28,23 @@ class HomeView(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        title = self.get_user_context(title='Home page')  # словарь для передачи данных с "миксина"
+
+        title = self.get_user_context(title="Home page")
+
         return {**context, **title}
 
-    def get_queryset(self):
-        return CarPost.objects.filter(is_published=True)
+
+class CarDetails(DataMixin, DetailView):
+    model = CarPost
+    template_name = 'cars/car_detail.html'
+    slug_url_kwarg = 'car_slug'
+    context_object_name = 'car'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        title = self.get_user_context(title='Car details')
+
+        return {**context, **title}
 
 
 def about(request):
@@ -50,7 +62,6 @@ class ContactFormView(DataMixin, FormView, View):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         title = self.get_user_context(title='Contact')
-
         return {**context, **title}
 
     def form_valid(self, form):

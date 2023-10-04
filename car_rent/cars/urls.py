@@ -6,6 +6,7 @@ app_name = 'cars'
 urlpatterns = [
 
     path('', HomeView.as_view(), name='home'),
+    path('car_details/<slug:car_slug>/', CarDetails.as_view(), name='car_details'),
     path('about/', about, name='about'),
     path('contact/', ContactFormView.as_view(), name='contact'),
     path('map/', MapView.as_view(), name='map'),
