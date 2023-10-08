@@ -79,7 +79,7 @@ class UpdateProfileView(DataMixin, View):
             profile.save()
 
             # Redirect to a success page
-            return render(request, 'users/success.html')
+            return reverse_lazy('cars:success')
 
         return render(request, self.template_name, {'form': form})
 

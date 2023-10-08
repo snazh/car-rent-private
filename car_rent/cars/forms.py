@@ -1,6 +1,6 @@
 from django import forms
 from captcha.fields import CaptchaField
-from .models import Car, CarPost
+from .models import CarPost
 
 
 class ContactForm(forms.Form):
@@ -11,6 +11,13 @@ class ContactForm(forms.Form):
 
 
 class CarPostForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['category'].empty_label = "Category not selected"
+
     class Meta:
         model = CarPost
-        fields = ['title', 'description', 'slug', 'daily_rent_cost', 'is_published', 'properties', 'category']
+        fields = ['title', 'description', 'status', 'daily_rent_cost', 'photo',
+                  'category', 'model', 'vendor', 'year']

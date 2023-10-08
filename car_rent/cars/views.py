@@ -1,35 +1,45 @@
+import random
+
 import folium
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.views.generic import ListView, FormView, CreateView, DetailView
+from .models import CarPost, Search, UserProfile
+from .forms import ContactForm, CarPostForm
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, FormView, CreateView, DetailView
-from .models import CarPost, Search, Car
 from .utils import DataMixin
-from .forms import ContactForm, CarPostForm
 
 
 class AddCarView(LoginRequiredMixin, DataMixin, CreateView):
     form_class = CarPostForm
     template_name = 'cars/add_car.html'
-    login_url = reverse_lazy('home')  # redirect if user is not authorized
+    login_url = reverse_lazy('cars:home')  # redirect if user is not authorized
     raise_exception = True  # access is forbidden
-    success_url = reverse_lazy('/')
+    success_url = reverse_lazy('cars:success')
+
+    def form_valid(self, form):
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        slug = f"{user_profile}{random.randrange(100)}"
+        form.instance.user = user_profile
+        form.instance.slug = slug
+        return super().form_valid(form)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Add Car")
+
         return {**context, **c_def}
 
 
-class HomeView(DataMixin, ListView):
-    template_name = 'cars/index.html'
+class CarView(DataMixin, ListView):
+    template_name = 'cars/cars.html'
     model = CarPost
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        title = self.get_user_context(title="Home page")
+        title = self.get_user_context(title="Cars")
 
         return {**context, **title}
 
@@ -45,13 +55,6 @@ class CarDetails(DataMixin, DetailView):
         title = self.get_user_context(title='Car details')
 
         return {**context, **title}
-
-
-def about(request):
-    context = {
-        'title': 'About us'
-    }
-    return render(request, 'cars/about.html', context=context)
 
 
 class ContactFormView(DataMixin, FormView, View):
@@ -91,3 +94,25 @@ class MapView(ListView):
 
     def get_queryset(self):
         pass
+
+
+def index(request):
+    context = {
+        'title': 'Home page'
+    }
+    return render(request, 'cars/index.html', context=context)
+
+
+def about(request):
+    context = {
+        'title': 'About us'
+    }
+    return render(request, 'cars/about.html', context=context)
+
+
+def successful_post(request):
+    context = {
+        'title': 'Success',
+        'message': 'The post has been published'
+    }
+    return render(request, 'cars/success.html', context=context)

@@ -65,11 +65,11 @@
             <p><strong>Created At:</strong> {{ car.created_at }}</p>
             <p><strong>Updated At:</strong> {{ car.updated_at }}</p>
             <p><strong>Is Published:</strong> {% if car.is_published %}Yes{% else %}No{% endif %}</p>
-            <p><strong>Car Model:</strong> {{ car.properties.model }}</p>
+            <p><strong>Car Model:</strong> {{ car.model }}</p>
             <!-- Add more attributes as needed -->
         </div>
         <div class="col-lg-6">
-            <img src="{{ car.properties.photo.url }}">
+            <img src="{{ car.photo.url }}">
         </div>
     </div>
 </div>
